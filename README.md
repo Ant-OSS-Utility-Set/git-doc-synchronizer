@@ -48,6 +48,41 @@ The parameters are as follows:
 }
 ```
 
+# How to use this tool in your project
+    1、If your project is adding a workflow for the first time, you can
+        a、Go to the repository where templates need to be added and click Actions->New workflow
+        b、After entering New workflow, click set up a workflow yourself to set the work template
+        c、The file name is sync-to-yuque.yml
+        d、Copy the following content to the file, and modify the parameters to the real save
+
+    2、If other workflows already exist in the project
+        a、Added sync-to-yuque.yml to the.github->workflows directory
+        b、Copy the following content to the file, and modify the parameters to the real save
+
+## Template case
+```yaml
+name: Sync with Yuque
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+jobs:
+  sync:
+    runs-on:  ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'main')
+    steps:
+      - uses: Duan-0916/gitdoc-sync-docker@main
+        with:
+          yuqueNamespace: "Replace it with the actual yuqueNamespace,Such as:XXXXXX/XXXXXX"
+          yuqueSite: "Replace with the actual yuqueSite，Such as:https://test.yuque.com"
+          yuqueToken: ${{ secrets.YUQUE_TOKEN }} # Replace with the actual yuquetoken
+```
+
 # How to contribute
 
 If you want to make your contribution to Sofadoc, you can first fork it into your own warehouse, modify it, and then submit a PR
