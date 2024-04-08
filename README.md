@@ -1,5 +1,5 @@
 # Motivation
-Sofadoc hopes to synchronize Markdown documents to Yuque, providing users with a better experience in editing and viewing documents
+git-doc-synchronizer hopes to synchronize Markdown documents to Yuque, providing users with a better experience in editing and viewing documents
 
 # Features
 - Synchronize Markdown documents to Yuque
