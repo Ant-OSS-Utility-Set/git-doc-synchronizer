@@ -51,7 +51,7 @@ git-doc-synchronizer 希望将Markdown文档同步到语雀等文档托管平台
         a、进入需要添加模板的存储库，单击Actions->New workflow
         b、进入“新建工作流”后，单击“自己设置工作流”，设置工作模板
         c、文件名为“sync-to-yuqueue.yml”
-        d、将以下内容拷贝到文件中，并将参数修改为real save
+        d、将以下内容拷贝到文件中，并将参数修改为真实的
 
     2、如果项目中已经存在其他工作流
         a、sync-to-yuque补充道.github->workflows 
@@ -74,7 +74,7 @@ jobs:
     runs-on:  ubuntu-latest
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'main')
     steps:
-      - uses: Duan-0916/gitdoc-sync-docker@main
+      - uses: Ant-OSS-Utility-Set/git-doc-synchronizer@main
         with:
           yuqueNamespace: "将其替换为实际的yuqueNamespace,例如:XXXXXX/XXXXXX"
           yuqueSite: "Replace with the actual yuqueSite，Such as:https://test.yuque.com"
@@ -83,31 +83,31 @@ jobs:
 
 # 如何贡献
 
-如果您想为Ssynchronizer做出贡献，您可以首先将其分叉到您自己的仓库中，修改它，然后提交PR
+如果您想为git-doc-synchronizer做出贡献，您可以首先将其fork到您自己的仓库中，修改它，然后提交PR
 
 # 如何扩展
 如果要将github仓库的markDown文档同步到其他平台，可以按照以下步骤对其进行扩展
 
     1、你可以把项目fork到你自己的仓库
-    2、您需要在plugins目录下创建一个目录。此目录包含所有实现逻辑(详细信息请参考Yuque中相应的逻辑) 
+    2、您需要在plugins目录下创建feishu目录。此目录包含所有实现逻辑(详细信息请参考Yuque中相应的逻辑)，其中包含FeishuClient,用于调用飞书Api 
     3、修改应用中的sofa.doc.sync.direction配置。属性配置文件。具体值是您创建的bean，例如syncService
     4、在您完成测试并确保完美执行后，您可以将您的PR提交到中央仓库
 
-**以飞行书文档为例**
+**以飞书文档为例**
 
-飞书文档文档同步文档API是： https://{domain}/open-apis/drive/v1/medias/upload_all     ##domain 需替换为真实域名
+飞书文档同步API是： https://{domain}/open-apis/drive/v1/medias/upload_all     ##domain 需替换为真实域名
 
-**所需的参数**
+**所需的参数，事例为Markdown文档**
 
     Content-Type: multipart/form-data
     Authorization: Bearer u-{xxxxx} //替换为真实的Authorization
     ile_name="demo.txt"  //需要上传的文件名称
     parent_type="ccm_import_open"
     size="5"
-    extra={"obj_type":"docx","file_extension":"txt"} 设置上传文档的格式，docx、txt、Markdown等
-    file=@"demo.txt"  //本地文件路径
+    extra={"obj_type":"docx","file_extension":"md"} 设置上传文档的格式，docx、txt、Markdown等
+    file=@"demo.md"  //本地文件路径
 
-**上传文件类型设置**
+**如果需要上传其他类型文档可参考可以参考下面的参数格式**
 
     type和file_extension需要结合来看，其中：  
     当type取值为docx时，file_extension支持取值为：  
@@ -119,7 +119,7 @@ jobs:
     markdown（Markdown）  
     html (HTML)  
 
-还可以使用postman进行调试，如下所示
+飞书原始url如下，您可以参考Yuque的的逻辑将下面的curl修改为实际的代码
 
 ```
 curl --location --request POST 'https://{domain}/open-apis/drive/v1/medias/upload_all' \ // domain 需替换为真实域名
