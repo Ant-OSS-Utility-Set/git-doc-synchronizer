@@ -1,0 +1,51 @@
+name: 'gitdoc-sync-docker'
+description: 'Build Git repo docs to yuque '
+inputs:
+  yuqueNamespace:
+    required: true
+  yuqueSite:
+    required: true
+  yuqueToken:
+    required: true
+  gitRepo:
+    required: true
+  gitBranch:
+    required: false
+    default: 'main'
+  gitDocToc:
+    required: false
+    default: 'docs/SUMMARY.md'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout Git Repo
+      uses: actions/checkout@v2
+    - name: Start Docker container
+      run: |
+        docker run -d -p 8080:8777 --name git-to-yuque -t dwl0916/laytto-to-yuquec:latest
+      shell: bash
+
+    - name: Wait for container to start
+      run: sleep 10
+      shell: bash
+    - name: Check port availability and sync Git Repo to Yuque
+      run: |
+        curl --location 'http://localhost:8080/v1/rest/sync' \
+        --header 'Content-Type: application/json' \
+        --data '{
+            "inputs": {
+                "yuqueNamespace":"${{ inputs.yuqueNamespace }}",
+                "yuqueSite":"${{ inputs.yuqueSite }}",
+                "yuqueToken":"${{ inputs.yuqueToken }}",
+                "gitRepo":"https://github.com/${{ github.repository }}.git",
+                "gitDocRoot":"/",
+                "gitDocToc":"${{ inputs.gitDocToc }}",
+                "gitBranch":"${{ inputs.gitBranch }}"
+            }
+          }'
+      shell: bash
+
+    - name: log
+      run: docker logs git-to-yuque
+      shell: bash
